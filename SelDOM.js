@@ -93,18 +93,57 @@
             _ref = this[_i];
             fn.call(_ref, _i, _ref);
         }
+        return this;
     };
 
+    selDOM.prototype.addClass = function () {
+        var args = arguments;
+        this.each(function (i, el) {
+            el.classList.add.apply(el.classList, args);
+        });
+        return this;
+    };
+    selDOM.prototype.toggleClass = function () {
+        var args = arguments;
+        this.each(function (i, el) {
+            el.classList.toggle.apply(el.classList, args);
+        });
+        return this;
+    };
+    selDOM.prototype.removeClass = function () {
+        var args = arguments;
+        this.each(function (i, el) {
+            el.classList.remove.apply(el.classList, args);
+        });
+        return this;
+    };
+    selDOM.prototype.hasClass = function (className) {
+        var hasClass = false;
+        this.each(function (i, el) {
+            if (el.classList.contains(className)) {
+                hasClass = true;
+            };
+        });
+        return hasClass;
+    };
+    selDOM.prototype.empty = function () {
+        this.each(function (i, el) {
+            el.innerHTML = '';
+        });
+
+    };
+    selDOM.prototype.html = function () {
+        return this[0].innerHTML;
+    };
+    selDOM.prototype.text = function () {
+        return this[0].innerText;
+    };
     /*
     TODO: Mirrior jQuery's api for the following methods:
-    addClass
     after
     append
     attr
     before
-    empty
-    hasClass
-    html
     insertAfter
     insertBefore
     prepend
@@ -112,16 +151,10 @@
     prop
     remove
     removeAttr
-    removeClass
     removeProp
-    text
-    toggleClass
-    
-
-    };
+    */
 
     selDOM.prototype.init.prototype = selDOM.prototype;
 
     window.selDOM = selDOM;
 })(document, window);
-console.log(selDOM('p'));
