@@ -20,10 +20,10 @@ module.exports = (grunt) ->
                 compress: true
                 preserveComments:'some' # preserve the blocks of comments that start with a /*!
                 sourceMap: "<%= pkg.name %>.min.js.map"
-                sourceMapIn: '<%= pkg.name %>.js.map'
 
-            src:['<%= pkg.name %>.js']
-            dest:'<%= pkg.name %>.min.js'
+            dist: 
+                src:['<%= pkg.name %>.js']
+                dest:'<%= pkg.name %>.min.js'
 
         # https:#npmjs.org/package/grunt-include-replace
         includereplace:
@@ -38,8 +38,10 @@ module.exports = (grunt) ->
                 prefix: '@@'
                 suffix: ''
 
-            # Files to perform replacements and includes with
-            src: ['<%= pkg.name %>.js', '<%= pkg.name %>.min.js', '<%= pkg.name %>.html']
+            default: 
+                # Files to perform replacements and includes with
+                src: ['<%= pkg.name %>.js', '<%= pkg.name %>.min.js', '<%= pkg.name %>.html']
+                dest: 'dist/'
 
         yuidoc:
             compile:
@@ -48,7 +50,7 @@ module.exports = (grunt) ->
                 version: '<%= pkg.version %>'
                 url: '<%= pkg.homepage %>'
                 options:
-                    paths: 'dist/'
+                    paths: '.'
                     outdir: 'docs/'
 
-    grunt.registerTask 'default',['clean', 'uglify', 'includereplace', 'yuidoc:compile']
+    grunt.registerTask 'default',['uglify:dist', 'includereplace:default', 'yuidoc:compile']
