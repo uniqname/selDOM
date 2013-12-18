@@ -27,7 +27,7 @@
     selDOM.prototype = [];
     selDOM.prototype.constructor = selDOM;
     selDOM.prototype.init = function (selector, context) {
-        var collection, _i, _ilen, _iref, _j, _jlen, _jref, _jfound, found, that, selF;
+        var collection, _i, _ilen, _iref, _j, _jlen, _jref, _jfound, found, selF;
 
         selF = this;
 
@@ -59,15 +59,13 @@
         } else if (selector === doc) {
             selF.push(doc);
         } else if (typeof selector === 'string') {
-            that = selF;
             context.each(function (idx, el) {
-                that.push.apply(that, makeArray(el.querySelectorAll(selector)));
+                selF.push.apply(selF, makeArray(el.querySelectorAll(selector)));
             });
 
         } else if (selector instanceof selDOM) {
-            that = selF;
             context.each(function (ctx_i, ctx_el) {
-                that.push.apply(that, ctx_el.find(selector));
+                selF.push.apply(selF, ctx_el.find(selector));
             });
         }
     };
@@ -138,19 +136,39 @@
     selDOM.prototype.text = function () {
         return this[0].innerText;
     };
+    selDOM.prototype.attr = function (attrName, attrValue) {
+        var val = '';
+        this.each(function (i, el) {
+            if (attrValue !== undefined) {
+                el.setAttribute(attrName, attrValue;)
+            } else {
+                val = el.getAttribute(attrName);
+            }
+        });
+        return val ? val : this;
+    };
+    selDOM.prototype.removeAttr = function (attrName) {
+        this.each(function (i, el) {
+            el.removeAttribute(attrName);
+        });
+    };
+    selDOM.prototype.remove = function (selector) {
+        var $items = selDOM(selector, this);
+        $items.each(function (i, el) {
+            el.parentNode.removeChild(el);
+        });
+        return $items;
+    };
     /*
     TODO: Mirrior jQuery's api for the following methods:
     after
     append
-    attr
     before
     insertAfter
     insertBefore
     prepend
     prependTo
     prop
-    remove
-    removeAttr
     removeProp
     */
 
