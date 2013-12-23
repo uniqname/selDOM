@@ -4,7 +4,7 @@
   "title": "selDOM",
   "url": "https://github.com/uniqname/selDOM",
   "author": "Cory Brown",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "devDependencies": {
     "grunt": "~0.4.1",
     "matchdep": "~0.1.1",
