@@ -19,11 +19,14 @@ module.exports = (grunt) ->
             options:
                 compress: true
                 preserveComments:'some' # preserve the blocks of comments that start with a /*!
-                sourceMap: "<%= pkg.name %>.min.js.map"
+                sourceMap: "dist/<%= pkg.name %>.min.js.map"
+                sourceMappingURL: "<%= pkg.name %>.min.js.map"
+                sourceMapRoot: "."
+                sourceMapPrefix: 1
 
             dist: 
-                src:['<%= pkg.name %>.js']
-                dest:'<%= pkg.name %>.min.js'
+                src:['dist/<%= pkg.name %>.js']
+                dest:'dist/<%= pkg.name %>.min.js'
 
         # https:#npmjs.org/package/grunt-include-replace
         includereplace:
@@ -32,7 +35,8 @@ module.exports = (grunt) ->
                 globals:
                     version: '<%= pkg.version %>'
                     date: '<%= grunt.template.today("yyyy/mm/dd") %>'
-                    selDOMjs: '<%= pkg.name %>.min.js'
+                    selDOMjs: '<%= pkg.name %>.js'
+                    selDOMjs_min: '<%= pkg.name %>.min.js'
                 
                 # Optional variable prefix & suffix, defaults as shown
                 prefix: '@@'
@@ -40,8 +44,24 @@ module.exports = (grunt) ->
 
             default: 
                 # Files to perform replacements and includes with
-                src: ['<%= pkg.name %>.js', '<%= pkg.name %>.min.js', '<%= pkg.name %>.html']
-                dest: 'dist/'
+                files: {
+                    'dist/':['*.js', '*.html']
+                }
+                # src: ['*.js', '*.html']
+                # dest: 'dist/'
+
+        # clean: {
+        #     dist: ['temp']
+        # },
+
+        shell: {
+            moveToDist: {
+                command: [
+                    'mv ./temp/<%= pkg.name %>.js ./dist/',
+                    'mv ./temp/playground.html ./dist/'
+                ].join('&&')
+            }
+        },
 
         yuidoc:
             compile:
@@ -50,7 +70,7 @@ module.exports = (grunt) ->
                 version: '<%= pkg.version %>'
                 url: '<%= pkg.homepage %>'
                 options:
-                    paths: '.'
+                    paths: 'dist/'
                     outdir: 'docs/'
 
-    grunt.registerTask 'default',['uglify:dist', 'includereplace:default', 'yuidoc:compile']
+    grunt.registerTask 'default',['includereplace:default', 'uglify:dist', 'yuidoc:compile']
