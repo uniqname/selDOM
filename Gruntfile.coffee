@@ -9,7 +9,7 @@ module.exports = (grunt) ->
         watch:
             js:
                 files: [
-                    '*.js'
+                    'src/*.js'
                 ]
                 tasks: 'uglify:dist'
                 options:
@@ -21,7 +21,7 @@ module.exports = (grunt) ->
                 preserveComments:'some' # preserve the blocks of comments that start with a /*!
                 sourceMap: "dist/<%= pkg.name %>.min.js.map"
                 sourceMappingURL: "<%= pkg.name %>.min.js.map"
-                sourceMapRoot: "."
+                sourceMapRoot: "src/"
                 sourceMapPrefix: 1
 
             dist: 
@@ -45,7 +45,7 @@ module.exports = (grunt) ->
             default: 
                 # Files to perform replacements and includes with
                 files: {
-                    'dist/':['*.js', '*.html']
+                    'dist/':['src/*.js', 'src/*.html']
                 }
                 # src: ['*.js', '*.html']
                 # dest: 'dist/'

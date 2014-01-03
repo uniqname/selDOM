@@ -98,6 +98,8 @@
         return true;
     };
 
+    selDOM.version = '0.0.1';
+
     proto = selDOM.prototype = [];
     proto.constructor = selDOM;
     proto.init = function (selector, context) {
@@ -186,21 +188,24 @@
     };
 
     proto.addClass = function () {
-        var args = arguments;
+        //Flatten nested arrays and normalize space delimited class lists
+        var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
         this.each(function (i, el) {
             el.classList.add.apply(el.classList, args);
         });
         return this;
     };
     proto.toggleClass = function () {
-        var args = arguments;
+        //Flatten nested arrays and normalize space delimited class lists
+        var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
         this.each(function (i, el) {
             el.classList.toggle.apply(el.classList, args);
         });
         return this;
     };
     proto.removeClass = function () {
-        var args = arguments;
+        //Flatten nested arrays and normalize space delimited class lists
+        var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
         this.each(function (i, el) {
             el.classList.remove.apply(el.classList, args);
         });
@@ -221,11 +226,51 @@
         });
 
     };
-    proto.html = function () {
-        return this[0].innerHTML;
+    proto.html = function (content) {
+        var asHTMLStr = function (i, el) {
+                el.innerHTML = content;
+            },
+            asFunction = function (i, el) {
+                oldHTML = this.innerHTML;
+                this.innerHTML = '';
+                this.innerHTML = content.call(el, i, oldHTML);
+            },
+            oldHTML;
+        if (content) {
+            if (typeof content === 'string') {
+                this.each(asHTMLStr);
+            } else if (typeof content === 'function') {
+                this.each(asFunction);
+            } else {
+                throw new TypeError('The first argument in the `html` method must be an HTML string or a function');
+            }
+            return this;
+        } else {
+            return this[0].innerHTML;
+        }
     };
-    proto.text = function () {
-        return this[0].innerText;
+    proto.text = function (content) {
+         var asTextStr = function (i, el) {
+                el.innerText = content;
+            },
+            asFunction = function (i, el) {
+                oldText = this.innerText;
+                this.innerText = '';
+                this.innerText = content.call(el, i, oldText);
+            },
+            oldText;
+        if (content) {
+            if (typeof content === 'string') {
+                this.each(asTextStr);
+            } else if (typeof content === 'function') {
+                this.each(asFunction);
+            } else {
+                throw new TypeError('The first argument in the `text` method must be a text string or a function');
+            }
+            return this;
+        } else {
+            return this[0].innerText;
+        }
     };
     proto.attr = function (attrName, attrValue) {
         var method = 'getAttribute',
@@ -350,6 +395,5 @@
         return this;
     };
     proto.init.prototype = proto;
-
     window.selDOM = selDOM;
 })(document, window);
