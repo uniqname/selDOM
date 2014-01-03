@@ -91,11 +91,28 @@ executes `fn` for every item in the matched set passing it the index of the item
 		return this === elem;	// true
 	});
 
+*empty*
+-------
+Removes all child nodes from each element in the matched set
+
+	$matchedSet.empty()
+
 *find*
 -----
 Finds all elements that match the selector that are children of the matched set
 
 	$matchedSet.find(selector)
+
+*html*
+-------
+If executed without arguments, returns the HTML content for the first element in the matched set.
+
+	$matchedSet.html()
+
+If executed with an argument, replaces the HTML content of each element in the matched set with the value of the argument
+
+	$matchedSet.html('<p>I replace what was there before.</p>');
+	$matchedSet.html(selDOMObject || nodes);
 
 *removeClass*
 ---------
