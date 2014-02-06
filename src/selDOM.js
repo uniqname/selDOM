@@ -1,17 +1,18 @@
-;(function (doc, win, undefined) {
+;
+(function(doc, win, undefined) {
     'use strict';
 
     var selDOM, arr, makeArray, deDup, htmlToNodes, isHTMLstr, proto, indexOfNode, injectContent;
-    
+
     arr = Array.prototype;
-    makeArray = function (list) {
+    makeArray = function(list) {
         return arr.slice.call(list);
     };
 
-    deDup = function (arr) {
+    deDup = function(arr) {
         var deDupped = selDOM(),
             _i, _ilen, _iref;
-        for (_i =0, _ilen = arr.length; _i < _ilen; _i++) {
+        for (_i = 0, _ilen = arr.length; _i < _ilen; _i++) {
             _iref = arr[_i];
             if (deDupped.indexOf(_iref) === -1) {
                 deDupped.push(_iref);
@@ -20,26 +21,26 @@
         return deDupped;
     };
 
-    isHTMLstr = function (str) {
+    isHTMLstr = function(str) {
         return !!str.match(/^<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)$/);
     };
-    htmlToNodes = function (htmlStr) {
+    htmlToNodes = function(htmlStr) {
         var frag = doc.createDocumentFragment(),
             temp = frag.appendChild(doc.createElement('div'));
 
         temp.innerHTML = htmlStr;
         return temp.childNodes;
     };
-    indexOfNode = function (el) {
+    indexOfNode = function(el) {
         var parent = el.parentNode,
             children = makeArray(parent.children);
         return children.indexOf(el);
     };
 
-    injectContent = function (content, method) {
+    injectContent = function(content, method) {
         var clone = this.length - 1; // Don't clone node if there's only one in the set, just move it.
         content = selDOM(content); // format the content
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             var parent, childIdx, lastChildIdx;
 
             if (method === 'after') {
@@ -47,7 +48,7 @@
                 childIdx = indexOfNode(el);
                 lastChildIdx = parent.childElementCount - 1;
             }
-            content.each(function (j, item) {
+            content.each(function(j, item) {
                 var node = clone ? item.cloneNode(true) : item;
                 if (method === 'prepend') {
                     el.insertBefore(node, el.firstChild);
@@ -67,16 +68,16 @@
         return content;
     };
 
-    selDOM = function (selector, context) {
+    selDOM = function(selector, context) {
         return new proto.init(selector, context);
     };
-    selDOM.isPlainObject = function( obj ) {
+    selDOM.isPlainObject = function(obj) {
         // Ripped from jQuery source (http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js)
         // Not plain objects:
         // - Any object or value whose internal [[Class]] property is not "[object Object]"
         // - DOM nodes
         // - window
-        if ( typeof obj !== "object" || obj.nodeType || obj.window === win ) {
+        if (typeof obj !== "object" || obj.nodeType || obj.window === win) {
             return false;
         }
 
@@ -85,11 +86,10 @@
         // the "constructor" property of certain host objects, ie. |window.location|
         // https://bugzilla.mozilla.org/show_bug.cgi?id=814622
         try {
-            if ( obj.constructor &&
-                    !Object.hasOwnProperty.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+            if (obj.constructor && !Object.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf")) {
                 return false;
             }
-        } catch ( e ) {
+        } catch (e) {
             return false;
         }
 
@@ -102,11 +102,13 @@
 
     proto = selDOM.prototype = [];
     proto.constructor = selDOM;
-    proto.init = function (selector, context) {
+    proto.init = function(selector, context) {
         var selF = this;
 
         // empty case
-        if (!selector && !context) { return selF; }
+        if (!selector && !context) {
+            return selF;
+        }
 
         // root
         if (selector === doc && !context) {
@@ -136,7 +138,7 @@
             if (isHTMLstr(selector)) {
                 selF.push.apply(selF, makeArray(htmlToNodes(selector)));
             } else {
-                context.each(function (idx, el) {
+                context.each(function(idx, el) {
                     selF.push.apply(selF, makeArray(el.querySelectorAll(selector)));
                 });
             }
@@ -145,7 +147,7 @@
             if (context.length === 1 && context[0] === doc) {
                 selF.push.apply(selF, selector);
             } else {
-                context.each(function (ctx_i, ctx_el) {
+                context.each(function(ctx_i, ctx_el) {
                     var $ctx_el = selDOM(ctx_el);
                     selF.push.apply(selF, $ctx_el.find(selector));
                 });
@@ -155,13 +157,13 @@
         }
         return selF;
     };
- 
-    proto.find = function (selector) {
-        var found = selDOM(), 
+
+    proto.find = function(selector) {
+        var found = selDOM(),
             el;
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             var $items = (selector instanceof selDOM) ? selector : selDOM(selector);
-            $items.each(function (idx, item) {
+            $items.each(function(idx, item) {
                 //https://developer.mozilla.org/en-US/docs/Web/API/Node.compareDocumentPosition
                 if (el.compareDocumentPosition(item) & (Node.DOCUMENT_POSITION_CONTAINED_BY + Node.DOCUMENT_POSITION_FOLLOWING)) {
                     found.push.call(found, item);
@@ -171,7 +173,7 @@
 
         return deDup(found);
     };
-    proto.each = function (fn, reverse) {
+    proto.each = function(fn, reverse) {
         var _i, _len, _ref;
         if (reverse) {
             for (_i = this.length - 1; _i >= 0; _i--) {
@@ -187,50 +189,50 @@
         return this;
     };
 
-    proto.addClass = function () {
+    proto.addClass = function() {
         //Flatten nested arrays and normalize space delimited class lists
         var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             el.classList.add.apply(el.classList, args);
         });
         return this;
     };
-    proto.toggleClass = function () {
+    proto.toggleClass = function() {
         //Flatten nested arrays and normalize space delimited class lists
         var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             el.classList.toggle.apply(el.classList, args);
         });
         return this;
     };
-    proto.removeClass = function () {
+    proto.removeClass = function() {
         //Flatten nested arrays and normalize space delimited class lists
         var args = arr.slice.call(arguments, 0).toString().split(/[\s,]/);
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             el.classList.remove.apply(el.classList, args);
         });
         return this;
     };
-    proto.hasClass = function (className) {
+    proto.hasClass = function(className) {
         var hasClass = false;
-        this.each(function (i, el) {
+        this.each(function(i, el) {
             if (el.classList.contains(className)) {
                 hasClass = true;
             }
         });
         return hasClass;
     };
-    proto.empty = function () {
-        this.each(function (i, el) {
+    proto.empty = function() {
+        this.each(function(i, el) {
             el.innerHTML = '';
         });
 
     };
-    proto.html = function (content) {
-        var asHTMLStr = function (i, el) {
-                el.innerHTML = content;
-            },
-            asFunction = function (i, el) {
+    proto.html = function(content) {
+        var asHTMLStr = function(i, el) {
+            el.innerHTML = content;
+        },
+            asFunction = function(i, el) {
                 oldHTML = this.innerHTML;
                 this.innerHTML = '';
                 this.innerHTML = content.call(el, i, oldHTML);
@@ -249,16 +251,19 @@
             return this[0].innerHTML;
         }
     };
-    proto.text = function (content) {
-         var asTextStr = function (i, el) {
-                el.innerText = content;
-            },
-            asFunction = function (i, el) {
+    proto.text = function(content) {
+        var asTextStr = function(i, el) {
+            el.innerText = content;
+        },
+            asFunction = function(i, el) {
                 oldText = this.innerText;
                 this.innerText = '';
                 this.innerText = content.call(el, i, oldText);
             },
             oldText;
+        if (!this.length) {
+            return this;
+        }
         if (content) {
             if (typeof content === 'string') {
                 this.each(asTextStr);
@@ -272,9 +277,9 @@
             return this[0].innerText;
         }
     };
-    proto.attr = function (attrName, attrValue) {
+    proto.attr = function(attrName, attrValue) {
         var method = 'getAttribute',
-            setAttr = function (i, el) {
+            setAttr = function(i, el) {
                 el.setAttribute(attr, attrName[attr]);
             },
             val;
@@ -287,7 +292,7 @@
             return this;
         } else if (typeof attrName === 'string') {
             if (typeof attrValue === 'string') {
-                this.each(function (i, el) {
+                this.each(function(i, el) {
                     el.setAttribute(attrName, attrValue);
                 });
             } else if (attrValue === undefined) {
@@ -298,25 +303,25 @@
             throw new TypeError('The first argument of `attr` must be a propery name as a string or an object representing a hash of attribute:value pairs.');
         }
     };
-    proto.removeAttr = function (attrName) {
-        this.each(function (i, el) {
+    proto.removeAttr = function(attrName) {
+        this.each(function(i, el) {
             el.removeAttribute(attrName);
         });
     };
-    proto.remove = function (selector) {
+    proto.remove = function(selector) {
         var $items = selDOM(selector, this);
-        $items.each(function (i, el) {
+        $items.each(function(i, el) {
             el.parentNode.removeChild(el);
         });
         return $items;
     };
-    proto.prepend = function (content) {
+    proto.prepend = function(content) {
         return injectContent.call(this, content, 'prepend');
     };
-    proto.append = function (content) {
+    proto.append = function(content) {
         return injectContent.call(this, content, 'append');
     };
-    proto.prependTo = function (target) {
+    proto.prependTo = function(target) {
         target = (typeof target === 'string') ? selDOM(target) : target;
         if (target instanceof selDOM) {
             injectContent.call(target, this, 'prepend');
@@ -325,7 +330,7 @@
             throw new TypeError('The `target` parameter of the prependTo method must be a selector or selDOM object');
         }
     };
-    proto.appendTo = function (target) {
+    proto.appendTo = function(target) {
         target = (typeof target === 'string') ? selDOM(target) : target;
 
         if (target instanceof selDOM) {
@@ -335,17 +340,17 @@
             throw new TypeError('The `target` parameter of the appendTo method must be selector or selDOM object');
         }
     };
-    proto.after = function (content) {
+    proto.after = function(content) {
         injectContent.call(this, content, 'after');
         return this;
     };
-    proto.before = function (content) {
+    proto.before = function(content) {
         injectContent.call(this, content, 'before');
         return this;
     };
-    proto.insertAfter = function (target) {
+    proto.insertAfter = function(target) {
         target = (typeof target === 'string') ? selDOM(target) : target;
-        
+
         if (target instanceof selDOM) {
             injectContent.call(target, this, 'after');
             return this;
@@ -353,19 +358,19 @@
             throw new TypeError('The `target` parameter of the insertAfter method must be selector or selDOM object');
         }
     };
-    proto.insertBefore = function (target) {
+    proto.insertBefore = function(target) {
         target = (typeof target === 'string') ? selDOM(target) : target;
-      
+
         if (target instanceof selDOM) {
             injectContent.call(target, this, 'before');
             return this;
         } else {
             throw new TypeError('The `target` parameter of the insertBefore method must be selector or selDOM object');
-        } 
+        }
     };
-    proto.prop = function (propName, propValue) {
+    proto.prop = function(propName, propValue) {
         var propNames,
-            setProp = function (i, el) {
+            setProp = function(i, el) {
                 el[prop] = propName[prop];
             };
         if (selDOM.isPlainObject(propName)) {
@@ -377,7 +382,7 @@
             return this;
         } else if (typeof propName === 'string') {
             if (propValue && typeof propValue === 'string') {
-                this.each(function (i, el) {
+                this.each(function(i, el) {
                     el[propName] = propValue;
                 });
                 return this;
@@ -388,8 +393,8 @@
             throw new TypeError('The first argument of `prop` must be a propery name as a string or an object representing a hash of property:value pairs.');
         }
     };
-    proto.removeProp = function (propName) {
-        this.each(function (i, el) {
+    proto.removeProp = function(propName) {
+        this.each(function(i, el) {
             delete el[propName];
         });
         return this;
