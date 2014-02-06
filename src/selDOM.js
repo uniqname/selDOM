@@ -1,4 +1,3 @@
-;
 (function(doc, win, undefined) {
     'use strict';
 
