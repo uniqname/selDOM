@@ -261,7 +261,7 @@
             },
             oldText;
         if (!this.length) {
-            return this;
+            return "";
         }
         if (content) {
             if (typeof content === 'string') {
