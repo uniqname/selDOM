@@ -64,7 +64,7 @@
                 }
             }, (method === 'prepend'));
         });
-        return content;
+        return this;
     };
 
     selDOM = function(selector, context) {
@@ -172,20 +172,11 @@
 
         return deDup(found);
     };
-    proto.each = function(fn, reverse) {
-        var _i, _len, _ref;
-        if (reverse) {
-            for (_i = this.length - 1; _i >= 0; _i--) {
-                _ref = this[_i];
-                fn.call(_ref, _i, _ref);
-            }
-        } else {
-            for (_i = 0, _len = this.length; _i < _len; _i++) {
-                _ref = this[_i];
-                fn.call(_ref, _i, _ref);
-            }
-        }
-        return this;
+    proto.each = function(fn) {
+        this.forEach(function(el, i, arr) {
+            fn.call(el, i, el);
+        });
+        return arr;
     };
 
     proto.addClass = function() {
@@ -247,7 +238,7 @@
             }
             return this;
         } else {
-            return this[0].innerHTML;
+            return this[0] ? this[0].innerHTML : "";
         }
     };
     proto.text = function(content) {
@@ -260,9 +251,6 @@
                 this.innerText = content.call(el, i, oldText);
             },
             oldText;
-        if (!this.length) {
-            return "";
-        }
         if (content) {
             if (typeof content === 'string') {
                 this.each(asTextStr);
@@ -273,7 +261,7 @@
             }
             return this;
         } else {
-            return this[0].innerText;
+            return this[0] ? this[0].innerText : "";
         }
     };
     proto.attr = function(attrName, attrValue) {
