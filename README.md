@@ -35,7 +35,7 @@ Inserts the value of `content` directly after each item in the matched set
 
 Appends the `content` passed to the method to each element in the matched set.
 	
-	$MatchedSet.append(content|selector);
+	$matchedSet.append(content|selector);
 
 
 *appendTo*
@@ -53,16 +53,16 @@ Appends the `content` generated or selected by the `selDOM` method into the elem
 -----
 Returns the value of the given attribute from the first element in the matched set.
 
-	$matchedSet.atr(attrName);
+	$matchedSet.attr(attrName);
 
 Set the value of the given attribute on each of the elements in the matched set.
 
-	$matchedSet.atr(attrName, attrValue);
+	$matchedSet.attr(attrName, attrValue);
 
 
 Set the value of the given attributes on each of the elements in the matched set.
 
-	$matchedSet.atr({
+	$matchedSet.attr({
 		attrName1: attrValue1,
 		attrName2: attrValue2,
 		attrNameN: attrValueN
