@@ -3,7 +3,7 @@
 
     var selDOM, arr, makeArray, deDup, htmlToNodes, isHTMLstr, proto, indexOfNode, injectContent;
 
-    arr = Array.prototype;
+    arr = [];
     makeArray = function(list) {
         return arr.slice.call(list);
     };
@@ -388,4 +388,7 @@
     };
     proto.init.prototype = proto;
     window.selDOM = selDOM;
+    
+    //add a jQuery compatible shortcut
+    window.$ = window.selDOM;
 })(document, window);
