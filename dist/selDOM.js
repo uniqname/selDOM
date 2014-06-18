@@ -1,9 +1,9 @@
 (function(doc, win, undefined) {
     'use strict';
 
-    var selDOM, arr, makeArray, deDup, htmlToNodes, isHTMLstr, proto, indexOfNode, injectContent;
+    var selDOM, arr, makeArray, deDup, htmlToNodes, isHTMLstr, proto, indexOfNode, injectContent, _$;
 
-    arr = Array.prototype;
+    arr = [];
     makeArray = function(list) {
         return arr.slice.call(list);
     };
@@ -70,6 +70,15 @@
     selDOM = function(selector, context) {
         return new proto.init(selector, context);
     };
+
+    selDOM.noConflict = function(){
+        if(typeof _$ !== 'undefined' && window.$ === this){
+            window.$ = _$;
+        }
+
+        return this;
+    };
+
     selDOM.isPlainObject = function(obj) {
         // Ripped from jQuery source (http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js)
         // Not plain objects:
@@ -97,7 +106,7 @@
         return true;
     };
 
-    selDOM.version = '0.0.1';
+    selDOM.version = '0.0.2';
 
     proto = selDOM.prototype = [];
     proto.constructor = selDOM;
@@ -386,6 +395,15 @@
         });
         return this;
     };
+
     proto.init.prototype = proto;
     window.selDOM = selDOM;
+    
+    //cache for noconflict implementation
+    _$ = window.$;
+
+    //add a jQuery compatible shortcut
+    //setup seldom as $
+    window.$ = window.selDOM;
+
 })(document, window);
