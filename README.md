@@ -17,6 +17,17 @@ Generates HTML nodes from an HTML string passed in as `content`
 
 	var $content = selDOM(content);
 
+
+*noConflict*
+--------
+	
+Reverts control to the original posessor of the `$` variable. 
+
+	selDOM.noConflict();
+or
+	$.noConflict()
+
+
 *addClass*
 ---------
 Add the specified class(es) to each element in the matched set if it does not already exist. Classes can be specified as an array of classNames, a space separated string of classNames or mixed.
