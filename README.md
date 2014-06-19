@@ -25,6 +25,7 @@ Reverts control to the original posessor of the `$` variable.
 
 	selDOM.noConflict();
 or
+	
 	$.noConflict()
 
 
