@@ -27,7 +27,7 @@ Reverts control to the original posessor of the `$` variable.
 or
 	
 	$.noConflict()
-
+After it's use you may only access selDOM through `selDOM`. Unless there was no previous `$` in which case selDOM is accessible through `$`.
 
 *addClass*
 ---------
