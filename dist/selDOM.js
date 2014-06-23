@@ -144,7 +144,7 @@ selDOM.noConflict = function() {
 selDOM.isPlainObject = utils.isPlainObject;
 
 // Exposing the version number on the selDOM object.
-selDOM.version = '0.2.0';
+selDOM.version = '0.3.0';
 
 // exposing selDOM to the global object
 this.selDOM = selDOM;
