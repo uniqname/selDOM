@@ -390,8 +390,8 @@ module.exports = function(propName, propValue) {
 var proto = [];
 
 proto.init = require('./init.js');
-proto.find = require('./find.js');
 proto.each = require('./each.js');
+proto.find = require('./find.js');
 proto.addClass = require('./addClass.js');
 proto.toggleClass = require('./toggleClass.js');
 proto.removeClass = require('./removeClass.js');
@@ -636,3 +636,6 @@ module.exports = {
     }
 };
 },{"./selDOM.js":24}]},{},[9])
+
+
+//# sourceMappingURL=selDOM.js.map

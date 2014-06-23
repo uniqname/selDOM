@@ -1,4 +1,5 @@
 var util = require('util'),
+    path = require('path'),
     gulp = require('gulp'),
     gulpUtil = require('gulp-util'),
     pkg = require('./package.json'),
@@ -7,8 +8,10 @@ var util = require('util'),
     uglify = require('gulp-uglify'),
     template = require('gulp-template'),
     browserify = require('gulp-browserify'),
+    exorcist = require('exorcist'),
     debug = require('gulp-debug'),
     plumber = require('gulp-plumber'),
+    transform = require('vinyl-transform'),
     _ = require('lodash');
 
 pkg = _.extend(pkg, {
@@ -30,7 +33,12 @@ gulp.task('lint', function() {
 gulp.task('minify', function() {
     gulp.src(['./src/selDOM.js'])
         .pipe(plumber())
-        .pipe(browserify())
+        .pipe(browserify({
+            debug: true
+        }))
+        .pipe(transform(function() {
+            return exorcist(path.join(__dirname, 'dist/', pkg.name + '.js.map'));
+        }))
         .pipe(template(pkg))
         .pipe(rename(pkg.name + '.js'))
         .pipe(gulp.dest('./dist'))
