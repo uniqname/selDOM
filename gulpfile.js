@@ -1,87 +1,70 @@
-var util = require('util');
-    node_static = require('node-static'),
+var util = require('util'),
+    path = require('path'),
     gulp = require('gulp'),
-    gulpUtil = require('gulp-util');
-    // lr = require('tiny-lr'),
+    gulpUtil = require('gulp-util'),
     pkg = require('./package.json'),
     jshint = require('gulp-jshint'),
-    concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
-    // refresh = require('gulp-livereload'),
     template = require('gulp-template'),
-    _ = require('lodash'),
-
-    appServer = require('http').createServer(function (request, response) {
-        var static = new node_static.Server('./dist')
-        request.addListener('end', function () {
-            static.serve(request, response);
-        }).resume();
-    }).listen(8080);
-
-
-    // createServers = function (port, lrport) {
-    //     var lrServer = lr(),
-    //     staticServer = new static.Server('./dist'),
-    //     app;
-
-    //     lrServer.listen(lrport, function (err) {
-    //         if (err) { return gulpUtil.log(err); }
-    //         gulpUtil.log('Live reload listening on port ' + lrport);
-    //     });
-
-    //     appServer = require('http').createServer(function (request, response) {
-    //         request.addListener('end', function () {
-    //             staticServer.serve(request, response);
-    //         }).resume();
-    //     }).listen(port);
-
-    //     return {
-    //         lr: lrServer,
-    //         app: appServer
-    //     }
-    // },
-
-    // servers = createServers(8080, 35729);
+    browserify = require('gulp-browserify'),
+    exorcist = require('exorcist'),
+    debug = require('gulp-debug'),
+    plumber = require('gulp-plumber'),
+    transform = require('vinyl-transform'),
+    _ = require('lodash');
 
 pkg = _.extend(pkg, {
-    date: (function (d) {
+    date: (function(d) {
         return util.format('%d/%d/%d', d.getFullYear(), d.getMonth(), d.getDate());
     })(new Date()),
-    env: 'dev',
     selDOMjs: pkg.name + '.js',
-    selDOMjs_min: pkg.name + '.min.js',
-    selDOMjs_ref: (pkg.env === 'prod') ? pkg.selDOMjs_min : pkg.selDOMjs
+    selDOMjs_min: pkg.name + '.min.js'
 });
 
 // Lint JS
 gulp.task('lint', function() {
-  gulp.src('./src/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+    gulp.src('./src/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
 });
 
 // Template Replace, Concat & Minify JS
-gulp.task('minify', function(){
-    gulp.src(['./src/*.js'])
+gulp.task('minify', function() {
+    gulp.src(['./src/selDOM.js'])
+        .pipe(plumber())
+        .pipe(browserify({
+            debug: true
+        }))
+        .pipe(transform(function() {
+            return exorcist(path.join(__dirname, 'dist/', pkg.name + '.js.map'));
+        }))
         .pipe(template(pkg))
-        .pipe(concat(pkg.name + '.js'))
+        .pipe(rename(pkg.name + '.js'))
         .pipe(gulp.dest('./dist'))
         .pipe(rename(pkg.name + '.min.js'))
-        .pipe(uglify())
+        .pipe(uglify({
+            outSourceMap: true
+        }))
         .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('move', function() {
+    gulp.src(['./src/*.html'])
+        .pipe(template(pkg))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('watch', function() {
+    gulp.watch(['./src/*.html'], ['move']);
+    gulp.watch(['./src/*.js'], ['lint', 'minify']);
+});
+
 // Default
-gulp.task('default', function(){
-    gulp.watch("./src/*.js", function(event) {
-        gulp.run('lint', 'minify');
-        gulpUtil.log(gulpUtil.colors.cyan(event.path), 'changed');
-        // servers.lr.changed({
-        //     body: {
-        //         files: [event.path]
-        //     }
-        // });
-    });
-    gulp.run('lint', 'minify');
+gulp.task('default', ['lint', 'minify', 'move'], function() {
+    gulp.watch(["./gulpfile.js", "./src/*.js", './src/*.html'], ['lint', 'minify', 'move'],
+        function(event) {
+            gulpUtil.log(gulpUtil.colors.cyan(event.path), 'changed');
+        }
+    );
 });
